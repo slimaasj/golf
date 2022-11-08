@@ -1,3 +1,4 @@
+import os
 from launch import LaunchDescription
 from launch_ros.actions import Node
 
@@ -14,5 +15,11 @@ def generate_launch_description():
             namespace='MAG',
             executable='pyMAGpub',
             name='pyMAGpub'
-        )
+        ),
+        Node(
+            package='golf',
+            namespace='State_Publisher',
+            executable='state_publisher',
+            name='state_publisher',
+        ),
     ])

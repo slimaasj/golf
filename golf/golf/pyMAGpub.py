@@ -5,7 +5,6 @@ import rclpy
 from numpy import array
 from rclpy.node import Node
 from sensor_msgs.msg import MagneticField
-from transforms3d.euler import euler2quat as quaternion_from_euler
 
 class PyMAGPub(Node):
     def __init__(self):

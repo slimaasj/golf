@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+<robot name="golfball_robot" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- ****************** ROBOT CONSTANTS *******************************  -->
+  <!-- Define the size of the robot's main chassis in meters -->
+  <!-- x-axis points forward, y-axis points to left, z-axis points upwards -->
+  <xacro:property name="base_width" value="1.00"/>
+  <xacro:property name="base_length" value="0.70"/>
+  <xacro:property name="base_height" value="0.25"/>
+
+
+  <!-- ********************** ROBOT BASE *********************************  -->
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 -0.05" rpy="1.5707963267949 0 3.141592654"/>
+      <geometry>
+        <mesh filename="package://golf/meshes/golfball_robot_base.stl" />
+      </geometry>
+      <material name="Red">
+        <color rgba="${255/255} ${0/255} ${0/255} 1.0"/>
+      </material>
+    </visual>
+
+    <collision>
+      <geometry>
+        <box size="${base_length} ${base_width} ${base_height}"/>
+      </geometry>
+    </collision>
+    
+  </link>
+  
+  <!-- *********************** IMU SETUP *********************************  -->
+  <!-- Each sensor must be attached to a link.                              --> 
+  
+  <joint name="imu_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="base_imu_link"/>
+    <origin xyz="-0.10 0 0.05" rpy="0 0 0"/>
+  </joint>
+
+  <link name="imu_link"/>
+
+  <!-- *********************** IMU SETUP *********************************  -->
+  <!-- Each sensor must be attached to a link.                              --> 
+  
+  <joint name="mag_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="base_mag_link"/>
+    <origin xyz="-0.10 0 0.05" rpy="0 0 0"/>
+  </joint>
+
+  <link name="mag_link"/>
+
+</robot>
