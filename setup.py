@@ -23,7 +23,6 @@ setup(
     entry_points={
         'console_scripts': [
             'golf = golf.pyIMUpub:main'
-            'golf = golf.pyMAGpub:main'
         ],
     },
 )
