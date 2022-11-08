@@ -23,6 +23,8 @@ class PyIMUPub(Node):
 
         bus = smbus.SMBus(1)
 
+        outputString = ""
+
         imu_msg = Imu()
 
         # TODO arrays not supported as parameter type ROS2

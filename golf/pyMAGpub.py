@@ -26,6 +26,8 @@ class PyMAGPub(Node):
 
         bus = smbus.SMBus(1)
 
+        outputString = ""
+
         mag_msg = MagneticField()
 
         # TODO arrays not supported as parameter type ROS2
