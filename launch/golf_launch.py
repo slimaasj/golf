@@ -7,12 +7,12 @@ def generate_launch_description():
             package='golf',
             namespace='IMU',
             executable='pyIMUpub',
-            name='IMU'
+            name='pyIMUpub'
         ),
         Node(
             package='golf',
             namespace='MAG',
             executable='pyMAGpub',
-            name='MAG'
+            name='pyMAGpub'
         )
     ])
