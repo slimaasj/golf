@@ -18,6 +18,12 @@ def generate_launch_description():
         ),
         Node(
             package='golf',
+            namespace='GPS',
+            executable='pyGPSpub',
+            name='pyGPSpub'
+        ),
+        Node(
+            package='golf',
             namespace='State_Publisher',
             executable='state_publisher',
             name='state_publisher',
