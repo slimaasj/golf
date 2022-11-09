@@ -26,6 +26,7 @@ setup(
         'console_scripts': [
             'pyIMUpub = golf.pyIMUpub:main',
             'pyMAGpub = golf.pyMAGpub:main',
+            'pyGPSpub = golf.pyGPSpub:main',
             'state_publisher = golf.state_publisher:main'
         ],
     },
