@@ -14,13 +14,12 @@ from sensor_msgs.msg import NavSatFix
 class PyGPSPub(Node):
     def __init__(self):
         super().__init__("pyGPSpub")
-        rclpy.init(args=args)
         
         pub_gps = self.create_publisher(
-                msg_type=NavSatFix,
-                topic='gps',
-                qos_profile=10,
-            )
+            msg_type=NavSatFix,
+            topic='gps',
+            qos_profile=10,
+        )
 
         
         def connectBus():
@@ -75,24 +74,10 @@ class PyGPSPub(Node):
                     gps_msg.latitude = float(msg.latitude)
                     gps_msg.longitude = float(msg.longitude)
                     #node.get_logger().info('Publishing gps data - Altitude: "%s" Latitude: "%s" Longitude: "%s" '%msg.altitude, msg.lat, msg.lon)
-                    publisher.publish(gps_msg)     
+                    pub_gps.publish(gps_msg)     
             except nmea.ParseError as e:
-                node.get_logger().warning('Parse error NMEA string')
-            except serial.SerialException as e:
-                node.get_logger().error('SerialException')    
+                print (e)
                 
-
-        timer_period = 0.5  # seconds
-        timer = node.create_timer(timer_period, gpstimer_callback)
-
-        rclpy.spin(node)
-
-        # Destroy the timer attached to the node explicitly
-        # (optional - otherwise it will be done automatically
-        # when the garbage collector destroys the node object)
-        node.destroy_timer(timer)
-        node.destroy_node()
-        rclpy.shutdown()
 
         while True:
             readGPS()
