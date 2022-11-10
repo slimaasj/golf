@@ -12,7 +12,7 @@ setup(
         ('share/ament_index/resource_index/packages',['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         (os.path.join('share', package_name), glob('launch/*.launch.py')),
-        (os.path.join('share', package_name), glob('urdf/*'))
+        (os.path.join('share', package_name), glob('urdf/*')),
         (os.path.join('share', package_name), glob('config/ekf.yaml'))
     ],
     install_requires=['setuptools'],
@@ -26,7 +26,7 @@ setup(
         'console_scripts': [
             'pyIMUpub = golf.pyIMUpub:main',
             'pyMAGpub = golf.pyMAGpub:main',
-            'pyGPSpub = golf.pyGPSpub:main',
+            'pyGPSpub = golf.pyGPSpub:main'
         ],
     },
 )

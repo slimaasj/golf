@@ -19,6 +19,7 @@ class PyGPSPub(Node):
             qos_profile=10,
         )
 
+        gps_msg = Pose()
         
         def connectBus():
             global BUS
@@ -66,17 +67,14 @@ class PyGPSPub(Node):
                 if "GGA" in line:
                     msg = nmea.parse(line)
 
-                    # create navsat msg
-                    gps_msg = Pose()
-                    gps_msg.header.stamp = time                                                             # time of gps measurement
-                    gps_msg.header.frame_id = self.declare_parameter('frame_header', 'base_gps').value      # the tracked robot frame
-                    gps_msg.pose.pose.position.x = float(msg.longitude)                                     # x measurement GPS.
-                    gps_msg.pose.pose.position.y = float(msg.latitude)                                      # y measurement GPS.
-                    gps_msg.pose.pose.position.z = float(msg.altitude)                                      # z measurement GPS.
-                    gps_msg.pose.pose.orientation.x = 1                                                     # identity quaternion
-                    gps_msg.pose.pose.orientation.y = 0                                                     # identity quaternion
-                    gps_msg.pose.pose.orientation.z = 0                                                     # identity quaternion
-                    gps_msg.pose.pose.orientation.w = 0                                                     # identity quaternion
+                    # create gps pose msg
+                    gps_msg.position.x = float(msg.latitude)                                      # x measurement GPS.
+                    gps_msg.position.y = float(msg.longitude)                                     # y measurement GPS.
+                    gps_msg.position.z = float(msg.altitude)                                      # z measurement GPS.
+                    gps_msg.orientation.x = 1.0                                                     # identity quaternion
+                    gps_msg.orientation.y = 0.0                                                     # identity quaternion
+                    gps_msg.orientation.z = 0.0                                                     # identity quaternion
+                    gps_msg.orientation.w = 0.0                                                     # identity quaternion
                     pub_gps.publish(gps_msg)
 
             except nmea.ParseError as e:
