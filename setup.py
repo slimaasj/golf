@@ -13,6 +13,7 @@ setup(
         ('share/' + package_name, ['package.xml']),
         (os.path.join('share', package_name), glob('launch/*.launch.py')),
         (os.path.join('share', package_name), glob('urdf/*'))
+        (os.path.join('share', package_name), glob('config/ekf.yaml'))
     ],
     install_requires=['setuptools'],
     zip_safe=True,
