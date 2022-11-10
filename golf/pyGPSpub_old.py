@@ -7,14 +7,14 @@ BUS = None
 address = 0x42
 gpsReadInterval = 0.03
 
-from geometry_msgs.msg import Pose
+from sensor_msgs.msg import NavSatFix
 
 class PyGPSPub(Node):
     def __init__(self):
         super().__init__("pyGPSpub")
         
         pub_gps = self.create_publisher(
-            msg_type=Pose,
+            msg_type=NavSatFix,
             topic='gps',
             qos_profile=10,
         )
@@ -65,20 +65,14 @@ class PyGPSPub(Node):
             try:
                 if "GGA" in line:
                     msg = nmea.parse(line)
-
+                    print (repr(msg))
                     # create navsat msg
-                    gps_msg = Pose()
-                    gps_msg.header.stamp = time                                                             # time of gps measurement
-                    gps_msg.header.frame_id = self.declare_parameter('frame_header', 'base_gps').value      # the tracked robot frame
-                    gps_msg.pose.pose.position.x = float(msg.longitude)                                     # x measurement GPS.
-                    gps_msg.pose.pose.position.y = float(msg.latitude)                                      # y measurement GPS.
-                    gps_msg.pose.pose.position.z = float(msg.altitude)                                      # z measurement GPS.
-                    gps_msg.pose.pose.orientation.x = 1                                                     # identity quaternion
-                    gps_msg.pose.pose.orientation.y = 0                                                     # identity quaternion
-                    gps_msg.pose.pose.orientation.z = 0                                                     # identity quaternion
-                    gps_msg.pose.pose.orientation.w = 0                                                     # identity quaternion
-                    pub_gps.publish(gps_msg)
-
+                    gps_msg = NavSatFix()
+                    gps_msg.altitude = float(msg.altitude)
+                    gps_msg.latitude = float(msg.latitude)
+                    gps_msg.longitude = float(msg.longitude)
+                    #node.get_logger().info('Publishing gps data - Altitude: "%s" Latitude: "%s" Longitude: "%s" '%msg.altitude, msg.lat, msg.lon)
+                    #pub_gps.publish(gps_msg)
             except nmea.ParseError as e:
                 print (e)
                 

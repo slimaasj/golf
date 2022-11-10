@@ -1,7 +1,6 @@
 import os
 from glob import glob
 from setuptools import setup
-from setuptools import find_packages
 
 package_name = 'golf'
 
@@ -27,7 +26,6 @@ setup(
             'pyIMUpub = golf.pyIMUpub:main',
             'pyMAGpub = golf.pyMAGpub:main',
             'pyGPSpub = golf.pyGPSpub:main',
-            'state_publisher = golf.state_publisher:main'
         ],
     },
 )

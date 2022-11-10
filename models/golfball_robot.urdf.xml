@@ -12,7 +12,7 @@
   <!-- ********************** ROBOT BASE *********************************  -->
   <link name="base_link">
     <visual>
-      <origin xyz="0 0 -0.05" rpy="1.5707963267949 0 3.141592654"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
         <mesh filename="package://golf/meshes/golfball_robot_base.stl" />
       </geometry>
@@ -31,24 +31,32 @@
   
   <!-- *********************** IMU SETUP *********************************  -->
   <!-- Each sensor must be attached to a link.                              --> 
-  
+  <link name="base_imu"/>
+
   <joint name="imu_joint" type="fixed">
     <parent link="base_link"/>
-    <child link="base_imu_link"/>
-    <origin xyz="-0.10 0 0.05" rpy="0 0 0"/>
+    <child link="base_imu"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
   </joint>
 
-  <link name="imu_link"/>
-
-  <!-- *********************** IMU SETUP *********************************  -->
+  <!-- *********************** MAG SETUP *********************************  -->
   <!-- Each sensor must be attached to a link.                              --> 
-  
+  <link name="base_mag"/>
+
   <joint name="mag_joint" type="fixed">
     <parent link="base_link"/>
-    <child link="base_mag_link"/>
-    <origin xyz="-0.10 0 0.05" rpy="0 0 0"/>
+    <child link="base_mag"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
   </joint>
 
-  <link name="mag_link"/>
+  <!-- *********************** GPS SETUP *********************************  -->
+  <!-- Each sensor must be attached to a link.                              --> 
+  <link name="base_gps"/>
+
+  <joint name="gps_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="base_gps"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
 
 </robot>

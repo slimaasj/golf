@@ -26,19 +26,19 @@ class PyIMUPub(Node):
         imu_msg = Imu()
 
         # TODO arrays not supported as parameter type ROS2
-        imu_msg.orientation_covariance = [0.0025, 0.0, 0.0,
-                                          0.0, 0.0025, 0.0,
-                                          0.0, 0.0, 0.0025]
+        imu_msg.orientation_covariance = [0.0, 0.0, 0.0,
+                                          0.0, 0.0, 0.0,
+                                          0.0, 0.0, 0.0]
     
-        imu_msg.angular_velocity_covariance = [0.002, 0.0, 0.0,
-                                               0.0, 0.002, 0.0,
-                                               0.0, 0.0, 0.002]
+        imu_msg.angular_velocity_covariance = [0.0, 0.0, 0.0,
+                                               0.0, 0.0, 0.0,
+                                               0.0, 0.0, 0.0]
         
-        imu_msg.linear_acceleration_covariance = [0.04, 0.0, 0.0,
-                                                  0.0, 0.04, 0.0,
-                                                  0.0, 0.0, 0.04]
+        imu_msg.linear_acceleration_covariance = [0.0, 0.0, 0.0,
+                                                  0.0, 0.0, 0.0,
+                                                  0.0, 0.0, 0.0]
 
-        imu_msg.header.frame_id = self.declare_parameter('frame_header', 'base_imu_link').value
+        imu_msg.header.frame_id = self.declare_parameter('frame_header', 'base_imu').value
 
         #Initialise the IMU
         #initialise the accelerometer

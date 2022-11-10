@@ -1,6 +1,4 @@
 import smbus
-import time
-import datetime
 import rclpy
 from numpy import array
 from rclpy.node import Node
@@ -34,7 +32,7 @@ class PyMAGPub(Node):
                                              0.0, 0.0, 0.0,
                                              0.0, 0.0, 0.0]
 
-        mag_msg.header.frame_id = self.declare_parameter('frame_header', 'base_mag_link').value
+        mag_msg.header.frame_id = self.declare_parameter('frame_header', 'base_mag').value
 
         #initialise the magnetometer
         bus.write_byte_data(0x1C,0x20, 0b11011100)        # Temp sesnor enabled, High performance, ODR 80 Hz, FAST ODR disabled and Selft test disabled.
