@@ -4,6 +4,7 @@ from numpy import array
 from rclpy.node import Node
 
 from geometry_msgs.msg import PoseWithCovarianceStamped
+from transforms3d.euler import euler2quat as quaternion_from_euler
 
 class PyMAGPub(Node):
     def __init__(self):
@@ -83,9 +84,11 @@ class PyMAGPub(Node):
             mag_msg = PoseWithCovarianceStamped()
             mag_msg.header.frame_id = self.declare_parameter('frame_header', 'base_mag').value
             mag_msg.header.stamp = self.get_clock().now().to_msg()
-            mag_msg.angular.x = MAGx
-            mag_msg.angular.y = MAGy
-            mag_msg.angular.z = MAGz
+            q = quaternion_from_euler(float(MAGx), float(MAGy), float(MAGz))
+            mag_msg.orientation.x = q[0]
+            mag_msg.orientation.y = q[1]
+            mag_msg.orientation.z = q[2]
+            mag_msg.orientation.w = q[3]
             mag_msg.header.stamp = self.get_clock().now().to_msg()
             pub_mag.publish(mag_msg)
 
