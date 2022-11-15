@@ -7,19 +7,18 @@ BUS = None
 address = 0x42
 gpsReadInterval = 0.03
 
-from geometry_msgs.msg import Pose
+from geometry_msgs.msg import PoseWithCovarianceStamped
 
 class PyGPSPub(Node):
     def __init__(self):
         super().__init__("pyGPSpub")
         
         pub_gps = self.create_publisher(
-            msg_type=Pose,
+            msg_type=PoseWithCovarianceStamped,
             topic='gps',
             qos_profile=10,
         )
 
-        gps_msg = Pose()
         
         def connectBus():
             global BUS
@@ -68,18 +67,16 @@ class PyGPSPub(Node):
                     msg = nmea.parse(line)
 
                     # create gps pose msg
-                    gps_msg.position.x = float(msg.latitude)                                      # x measurement GPS.
-                    gps_msg.position.y = float(msg.longitude)                                     # y measurement GPS.
-                    gps_msg.position.z = float(msg.altitude)                                      # z measurement GPS.
-                    gps_msg.orientation.x = 1.0                                                     # identity quaternion
-                    gps_msg.orientation.y = 0.0                                                     # identity quaternion
-                    gps_msg.orientation.z = 0.0                                                     # identity quaternion
-                    gps_msg.orientation.w = 0.0                                                     # identity quaternion
+                    gps_msg = PoseWithCovarianceStamped()
+                    gps_msg.header.frame_id = self.declare_parameter('frame_header', 'base_gps').value
+                    gps_msg.header.stamp = self.get_clock().now().to_msg()
+                    gps_msg.position.x = float(msg.latitude)        # x measurement GPS.
+                    gps_msg.position.y = float(msg.longitude)       # y measurement GPS.
+                    gps_msg.position.z = float(msg.altitude)        # z measurement GPS.
                     pub_gps.publish(gps_msg)
 
             except nmea.ParseError as e:
                 print (e)
-                
 
         while True:
             readGPS()

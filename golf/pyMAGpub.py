@@ -2,37 +2,31 @@ import smbus
 import rclpy
 from numpy import array
 from rclpy.node import Node
-from sensor_msgs.msg import MagneticField
+
+from geometry_msgs.msg import PoseWithCovarianceStamped
 
 class PyMAGPub(Node):
     def __init__(self):
         super().__init__("pyMAGpub")
 
         pub_mag = self.create_publisher(
-            msg_type=MagneticField,
+            msg_type=PoseWithCovarianceStamped,
             topic='mag',
             qos_profile=1,
         )
 
-        magXmin =  0
-        magYmin =  0
-        magZmin =  0
-        magXmax =  0
-        magYmax =  0
-        magZmax =  0
+
+        magXmin = -2854
+        magYmin = -541
+        magZmin = -2020
+        magXmax = 11
+        magYmax = 2240
+        magZmax = 988
+
 
         bus = smbus.SMBus(1)
 
         outputString = ""
-
-        mag_msg = MagneticField()
-
-        # TODO arrays not supported as parameter type ROS2
-        mag_msg.magnetic_field_covariance = [0.0, 0.0, 0.0,
-                                             0.0, 0.0, 0.0,
-                                             0.0, 0.0, 0.0]
-
-        mag_msg.header.frame_id = self.declare_parameter('frame_header', 'base_mag').value
 
         #initialise the magnetometer
         bus.write_byte_data(0x1C,0x20, 0b11011100)        # Temp sesnor enabled, High performance, ODR 80 Hz, FAST ODR disabled and Selft test disabled.
@@ -86,17 +80,12 @@ class PyMAGPub(Node):
             MAGy -= (magYmin + magYmax) /2
             MAGz -= (magZmin + magZmax) /2
 
-
-            if 1:       #Change to '0' to stop  showing the angles from the magnetometer
-                outputString +="\t# MAGx %5.2f  MAGy %5.2f  MAGz %5.2f # " % (MAGx, MAGy, MAGz)
-
-            print(outputString)
-
-            mag_msg.magnetic_field.x = MAGx
-            mag_msg.magnetic_field.y = MAGy
-            mag_msg.magnetic_field.z = MAGz
-
-
+            mag_msg = PoseWithCovarianceStamped()
+            mag_msg.header.frame_id = self.declare_parameter('frame_header', 'base_mag').value
+            mag_msg.header.stamp = self.get_clock().now().to_msg()
+            mag_msg.angular.x = MAGx
+            mag_msg.angular.y = MAGy
+            mag_msg.angular.z = MAGz
             mag_msg.header.stamp = self.get_clock().now().to_msg()
             pub_mag.publish(mag_msg)
 

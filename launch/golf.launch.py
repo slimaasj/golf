@@ -7,7 +7,7 @@ import launch_ros
 
 def generate_launch_description():
     pkg_share = launch_ros.substitutions.FindPackageShare(package='golf').find('golf')
-    default_model_path = os.path.join(pkg_share, 'src/golf/models/golfball_robot.urdf')
+    default_model_path = os.path.join(pkg_share, 'golfball_robot.urdf.xml')
 
     robot_state_publisher_node = launch_ros.actions.Node(
         package='robot_state_publisher',
@@ -19,7 +19,7 @@ def generate_launch_description():
         executable='ekf_node',
         name='ekf_filter_node',
         output='screen',
-        parameters=[os.path.join(pkg_share, 'config/ekf.yaml'), {'use_sim_time': LaunchConfiguration('use_sim_time')}]
+        parameters=[os.path.join(pkg_share, 'ekf.yaml'), {'use_sim_time': LaunchConfiguration('use_sim_time')}]
     )
 
 
@@ -48,5 +48,5 @@ def generate_launch_description():
             namespace='GPS',
             executable='pyGPSpub',
             name='pyGPSpub'
-        ),
+        )
     ])
