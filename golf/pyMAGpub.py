@@ -24,6 +24,8 @@ class PyMAGPub(Node):
         magYmax = 2240
         magZmax = 988
 
+        mag_msg = PoseWithCovarianceStamped()
+        mag_msg.header.frame_id = self.declare_parameter('frame_header', 'base_mag').value
 
         bus = smbus.SMBus(1)
 
@@ -81,14 +83,14 @@ class PyMAGPub(Node):
             MAGy -= (magYmin + magYmax) /2
             MAGz -= (magZmin + magZmax) /2
 
-            mag_msg = PoseWithCovarianceStamped()
-            mag_msg.header.frame_id = self.declare_parameter('frame_header', 'base_mag').value
-            mag_msg.header.stamp = self.get_clock().now().to_msg()
             q = quaternion_from_euler(float(MAGx), float(MAGy), float(MAGz))
-            mag_msg.orientation.x = q[0]
-            mag_msg.orientation.y = q[1]
-            mag_msg.orientation.z = q[2]
-            mag_msg.orientation.w = q[3]
+            mag_msg.pose.pose.position.x = 0.0
+            mag_msg.pose.pose.position.y = 0.0
+            mag_msg.pose.pose.position.z = 0.0
+            mag_msg.pose.pose.orientation.x = q[0]
+            mag_msg.pose.pose.orientation.y = q[1]
+            mag_msg.pose.pose.orientation.z = q[2]
+            mag_msg.pose.pose.orientation.w = q[3]
             mag_msg.header.stamp = self.get_clock().now().to_msg()
             pub_mag.publish(mag_msg)
 
