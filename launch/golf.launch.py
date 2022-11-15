@@ -17,14 +17,14 @@ def generate_launch_description():
     robot_localization_node_map = launch_ros.actions.Node(
         package='robot_localization',
         executable='ekf_node',
-        name='ekf_filter_node',
+        name='ekf_filter_node_map',
         output='screen',
         parameters=[os.path.join(pkg_share, 'ekf_map.yaml'), {'use_sim_time': LaunchConfiguration('use_sim_time')}]
     )
     robot_localization_node_odom = launch_ros.actions.Node(
         package='robot_localization',
         executable='ekf_node',
-        name='ekf_filter_node',
+        name='ekf_filter_node_odom',
         output='screen',
         parameters=[os.path.join(pkg_share, 'ekf_odom.yaml'), {'use_sim_time': LaunchConfiguration('use_sim_time')}]
     )
