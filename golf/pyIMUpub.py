@@ -112,32 +112,41 @@ class PyIMUPub(Node):
             gyr_combined = (gyr_l | gyr_h <<8)
             return gyr_combined  if gyr_combined < 32768 else gyr_combined - 65536
 
-        #Read and Convert Gyro to Deg
-        GYRx =  (readGYRx() * G_GAIN)/RAD_TO_DEG
-        GYRy =  (readGYRy() * G_GAIN)/RAD_TO_DEG
-        GYRz =  (readGYRz() * G_GAIN)/RAD_TO_DEG
+        while True:
+            #Read and Convert Gyro raw to rad per second
+            GYRx =  (readGYRx() * G_GAIN)/RAD_TO_DEG
+            GYRy =  (readGYRy() * G_GAIN)/RAD_TO_DEG
+            GYRz =  (readGYRz() * G_GAIN)/RAD_TO_DEG
 
-        #Read and Convert Accel to m/s
-        ACCx = ((readACCx() * 0.244)/1000) * G_TO_MS2
-        ACCy = ((readACCy() * 0.244)/1000) * G_TO_MS2
-        ACCz = ((readACCz() * 0.244)/1000) * G_TO_MS2
+            #Read and Convert Accel to m/s
+            ACCx = ((readACCx() * 0.244)/1000) * G_TO_MS2
+            ACCy = ((readACCy() * 0.244)/1000) * G_TO_MS2
+            ACCz = ((readACCz() * 0.244)/1000) * G_TO_MS2
 
-        imu_msg.linear_acceleration.x = float(ACCx)
-        imu_msg.linear_acceleration.y = float(ACCy)
-        imu_msg.linear_acceleration.z = float(ACCz)
+            if 1:       #Change to '0' to stop showing the angles from the accelerometer
+                outputString += "#  ACCx %5.2f ACCy %5.2f ACCz %5.2f  #  " % (ACCx, ACCy, ACCz)
 
-        imu_msg.angular_velocity.x = float(GYRx)
-        imu_msg.angular_velocity.y = float(GYRy)
-        imu_msg.angular_velocity.z = float(GYRz)
+            if 1:       #Change to '0' to stop  showing the angles from the gyro
+                outputString +="\t# GRYx %5.2f  GYRy %5.2f  GYRz %5.2f # " % (GYRx, GYRy, GYRz)
 
-        q = quaternion_from_euler(float(GYRx), float(GYRy), float(GYRz))
-        imu_msg.orientation.x = q[0]
-        imu_msg.orientation.y = q[1]
-        imu_msg.orientation.z = q[2]
-        imu_msg.orientation.w = q[3]
+            print(outputString)
 
-        imu_msg.header.stamp = self.get_clock().now().to_msg()
-        pub_imu.publish(imu_msg)
+            imu_msg.linear_acceleration.x = float(ACCx)
+            imu_msg.linear_acceleration.y = float(ACCy)
+            imu_msg.linear_acceleration.z = float(ACCz)
+
+            imu_msg.angular_velocity.x = float(GYRx)
+            imu_msg.angular_velocity.y = float(GYRy)
+            imu_msg.angular_velocity.z = float(GYRz)
+
+            q = quaternion_from_euler(float(GYRx), float(GYRy), float(GYRz))
+            imu_msg.orientation.x = q[0]
+            imu_msg.orientation.y = q[1]
+            imu_msg.orientation.z = q[2]
+            imu_msg.orientation.w = q[3]
+
+            imu_msg.header.stamp = self.get_clock().now().to_msg()
+            pub_imu.publish(imu_msg)
 
 
 def main(args=None):

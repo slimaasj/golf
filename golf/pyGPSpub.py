@@ -16,20 +16,14 @@ class PyGPSPub(Node):
         pub_gps = self.create_publisher(
             msg_type=NavSatFix,
             topic='gps',
-            qos_profile=10
-            )
+            qos_profile=10,
+        )
 
-        gps_msg = NavSatFix()
-        gps_msg.header = self.get_header()
-        gps_msg.header.stamp = self.get_clock().now().to_msg()
-        gps_msg.header.frame_id = self.declare_parameter('frame_header', 'base_gps').value
-
-
+        
         def connectBus():
             global BUS
             BUS = smbus.SMBus(1)
 
-        connectBus()
 
         def parseResponse(gpsLine):
             if(gpsLine.count(36) == 1):                                 # Check #1, make sure '$' doesnt appear twice
@@ -67,25 +61,28 @@ class PyGPSPub(Node):
                 connectBus()
             except Exception as e:
                 print (e)
+        connectBus()
 
 
         def gpstimer_callback(line):
             try:
                 if "GGA" in line:
                     msg = nmea.parse(line)
-
-                    # create gps pose msg
-                    gps_msg.latitude = float(msg.latitude)        # x measurement GPS.
-                    gps_msg.longitude = float(msg.longitude)      # y measurement GPS
-                    gps_msg.altitude = float(msg.altitude)        # z measurement GPS.
-                    gps_msg.status.status = 1
-                    gps_msg.header.stamp = self.get_clock().now().to_msg()
+                    print (repr(msg))
+                    # create navsat msg
+                    gps_msg = NavSatFix()
+                    gps_msg.altitude = float(msg.altitude)
+                    gps_msg.latitude = float(msg.latitude)
+                    gps_msg.longitude = float(msg.longitude)
+                    #node.get_logger().info('Publishing gps data - Altitude: "%s" Latitude: "%s" Longitude: "%s" '%msg.altitude, msg.lat, msg.lon)
                     pub_gps.publish(gps_msg)
-
             except nmea.ParseError as e:
                 print (e)
+                
 
-        readGPS()
+        while True:
+            readGPS()
+            time.sleep(gpsReadInterval)
 
 def main(args=None):
     rclpy.init(args=args)
