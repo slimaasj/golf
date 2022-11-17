@@ -13,9 +13,8 @@ class PyMAGPub(Node):
         pub_mag = self.create_publisher(
             msg_type=PoseWithCovarianceStamped,
             topic='mag',
-            qos_profile=1,
+            qos_profile=1
         )
-
 
         magXmin = -2854
         magYmin = -541
@@ -29,13 +28,10 @@ class PyMAGPub(Node):
 
         bus = smbus.SMBus(1)
 
-        outputString = ""
-
         #initialise the magnetometer
         bus.write_byte_data(0x1C,0x20, 0b11011100)        # Temp sesnor enabled, High performance, ODR 80 Hz, FAST ODR disabled and Selft test disabled.
         bus.write_byte_data(0x1C,0x21, 0b00100000)        # +/- 8 gauss
         bus.write_byte_data(0x1C,0x22, 0b00000000)        # Continuous-conversion mode
-
 
         def readMAGx():
             mag_l = 0
@@ -47,7 +43,6 @@ class PyMAGPub(Node):
             mag_combined = (mag_l | mag_h <<8)
             return mag_combined  if mag_combined < 32768 else mag_combined - 65536
 
-
         def readMAGy():
             mag_l = 0
             mag_h = 0
@@ -57,7 +52,6 @@ class PyMAGPub(Node):
 
             mag_combined = (mag_l | mag_h <<8)
             return mag_combined  if mag_combined < 32768 else mag_combined - 65536
-
 
         def readMAGz():
             mag_l = 0
@@ -70,29 +64,26 @@ class PyMAGPub(Node):
             return mag_combined  if mag_combined < 32768 else mag_combined - 65536
 
 
-        while True:
+        #Read the accelerometer,gyroscope and magnetometer values
+        MAGx = readMAGx()
+        MAGy = readMAGy()
+        MAGz = readMAGz()
 
-            #Read the accelerometer,gyroscope and magnetometer values
-            MAGx = readMAGx()
-            MAGy = readMAGy()
-            MAGz = readMAGz()
+        #Apply compass calibration
+        MAGx -= (magXmin + magXmax) /2
+        MAGy -= (magYmin + magYmax) /2
+        MAGz -= (magZmin + magZmax) /2
 
-
-            #Apply compass calibration
-            MAGx -= (magXmin + magXmax) /2
-            MAGy -= (magYmin + magYmax) /2
-            MAGz -= (magZmin + magZmax) /2
-
-            q = quaternion_from_euler(float(MAGx), float(MAGy), float(MAGz))
-            mag_msg.pose.pose.position.x = 0.0
-            mag_msg.pose.pose.position.y = 0.0
-            mag_msg.pose.pose.position.z = 0.0
-            mag_msg.pose.pose.orientation.x = q[0]
-            mag_msg.pose.pose.orientation.y = q[1]
-            mag_msg.pose.pose.orientation.z = q[2]
-            mag_msg.pose.pose.orientation.w = q[3]
-            mag_msg.header.stamp = self.get_clock().now().to_msg()
-            pub_mag.publish(mag_msg)
+        q = quaternion_from_euler(float(MAGx), float(MAGy), float(MAGz))
+        mag_msg.pose.pose.position.x = 0.0
+        mag_msg.pose.pose.position.y = 0.0
+        mag_msg.pose.pose.position.z = 0.0
+        mag_msg.pose.pose.orientation.x = q[0]
+        mag_msg.pose.pose.orientation.y = q[1]
+        mag_msg.pose.pose.orientation.z = q[2]
+        mag_msg.pose.pose.orientation.w = q[3]
+        mag_msg.header.stamp = self.get_clock().now().to_msg()
+        pub_mag.publish(mag_msg)
 
 
 def main(args=None):

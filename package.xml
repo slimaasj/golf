@@ -3,7 +3,7 @@
 <package format="3">
   <name>golf</name>
   <version>0.0.0</version>
-  <description>Publishes raw IMU and Mag</description>
+  <description>Runs Autonomous Golf Ball Search and Rescue Robot</description>
   <maintainer email="Salimjbara@gmail.com">slim</maintainer>
   <license>MIT</license>
 
@@ -17,6 +17,7 @@
   <depend>transforms3d</depend>
   <depend>geometry_msgs</depend>
   <depend>pynmea2</depend>
+  <depend>RPi</depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

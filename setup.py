@@ -16,16 +16,17 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='slim',
+    maintainer='Salim',
     maintainer_email='Salimjbara@gmail.com',
-    description='Publishes raw IMU and Mag',
+    description='Runs Autonomous Golf Ball Search and Rescue Robot',
     license='MIT',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
             'pyIMUpub = golf.pyIMUpub:main',
             'pyMAGpub = golf.pyMAGpub:main',
-            'pyGPSpub = golf.pyGPSpub:main'
+            'pyGPSpub = golf.pyGPSpub:main',
+            'pyMotor = golf.pyMotor:main'
         ],
     },
 )

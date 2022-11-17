@@ -56,5 +56,11 @@ def generate_launch_description():
             namespace='GPS',
             executable='pyGPSpub',
             name='pyGPSpub'
+        ),
+        Node(
+            package='golf',
+            namespace='Motor',
+            executable='pyMotor',
+            name='pyMotor'
         )
     ])

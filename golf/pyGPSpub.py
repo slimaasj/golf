@@ -7,25 +7,29 @@ BUS = None
 address = 0x42
 gpsReadInterval = 0.03
 
-from geometry_msgs.msg import PoseWithCovarianceStamped
+from sensor_msgs.msg import NavSatFix
 
 class PyGPSPub(Node):
     def __init__(self):
         super().__init__("pyGPSpub")
         
         pub_gps = self.create_publisher(
-            msg_type=PoseWithCovarianceStamped,
+            msg_type=NavSatFix,
             topic='gps',
-            qos_profile=10,
-        )
+            qos_profile=10
+            )
 
-        gps_msg = PoseWithCovarianceStamped()
-        gps_msg.header.frame_id = self.declare_parameter('frame_header', 'base_gps').value
+        gps_msg = NavSatFix()
+        gps_msg.header = self.get_header()
         gps_msg.header.stamp = self.get_clock().now().to_msg()
-        
+        gps_msg.header.frame_id = self.declare_parameter('frame_header', 'base_gps').value
+
+
         def connectBus():
             global BUS
             BUS = smbus.SMBus(1)
+
+        connectBus()
 
         def parseResponse(gpsLine):
             if(gpsLine.count(36) == 1):                                 # Check #1, make sure '$' doesnt appear twice
@@ -45,6 +49,7 @@ class PyGPSPub(Node):
                             if (chkVal == int(chkSum, 16)):             # Compare the calculated checksum with the one in the NMEA sentence
                                 gpstimer_callback(gpsChars)
 
+
         def readGPS():
             c = None
             response = []
@@ -62,7 +67,7 @@ class PyGPSPub(Node):
                 connectBus()
             except Exception as e:
                 print (e)
-        connectBus()
+
 
         def gpstimer_callback(line):
             try:
@@ -70,22 +75,17 @@ class PyGPSPub(Node):
                     msg = nmea.parse(line)
 
                     # create gps pose msg
-                    gps_msg.pose.pose.position.x = float(msg.latitude)        # x measurement GPS.
-                    gps_msg.pose.pose.position.y = float(msg.longitude)       # y measurement GPS
-                    gps_msg.pose.pose.position.z = float(msg.altitude)        # z measurement GPS.
-                    gps_msg.pose.pose.orientation.x = 1.0
-                    gps_msg.pose.pose.orientation.y = 0.0
-                    gps_msg.pose.pose.orientation.z = 0.0
-                    gps_msg.pose.pose.orientation.w = 0.0
+                    gps_msg.latitude = float(msg.latitude)        # x measurement GPS.
+                    gps_msg.longitude = float(msg.longitude)      # y measurement GPS
+                    gps_msg.altitude = float(msg.altitude)        # z measurement GPS.
+                    gps_msg.status.status = 1
                     gps_msg.header.stamp = self.get_clock().now().to_msg()
                     pub_gps.publish(gps_msg)
 
             except nmea.ParseError as e:
                 print (e)
 
-        while True:
-            readGPS()
-            time.sleep(gpsReadInterval)
+        readGPS()
 
 def main(args=None):
     rclpy.init(args=args)
